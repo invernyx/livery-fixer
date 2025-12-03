@@ -26,9 +26,9 @@ namespace liveryfixer
                         if (!registrations.Contains(reg))
                             registrations.Add(reg);
                         else if(string.IsNullOrEmpty(reg))
-                            errors.Add($"Missing registration in {livery.Path}");
+                            errors.Add($"Error: Missing registration in {livery.Path}");
                         else
-                            errors.Add($"Duplicate registration found: {reg} in {livery.Path}");
+                            errors.Add($"Error: Duplicate registration found: {reg} in {livery.Path}");
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace liveryfixer
                     {
                         if (string.IsNullOrEmpty(livery.AirlineICAO?.Replace("\"", "")))
                         {
-                            errors.Add($"Missing Airline ICAO for registration: {livery.Registration} in {livery.Path}");
+                            errors.Add($"Error: Missing Airline ICAO for registration: {livery.Registration} in {livery.Path}");
                         }
                     }
                 }
@@ -106,7 +106,32 @@ namespace liveryfixer
 
                 desName = desName.Replace(" ", "").ToLowerInvariant();
 
-                int i = 2 * 2;
+                string parentDir = System.IO.Path.GetDirectoryName(pkg.Path);
+                string newPath = System.IO.Path.Combine(parentDir, desName);
+
+                if(newPath.ToLowerInvariant() == pkg.Path.ToLowerInvariant())
+                {
+                    continue;
+                }
+
+                if (System.IO.Directory.Exists(newPath) == false)
+                {
+                    actionsTaken.Add($"Renaming {pkg.Path} to {newPath}");
+                    try
+                    {
+                        System.IO.Directory.Move(pkg.Path, newPath);
+                        pkg.Path = newPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        actionsTaken.Add($"Error: Failed to rename {pkg.Path} to {newPath}: {ex.Message}");
+                        continue;
+                    }                    
+                }
+                else
+                {
+                    actionsTaken.Add($"Error: Cannot rename {pkg.Path} to {newPath} because the target directory already exists");
+                }
             }
 
             return actionsTaken;
