@@ -172,7 +172,7 @@ namespace liveryfixer
                             }
 
                             
-                            List<string> regErrors = Tasks.CheckRegistrations(ref packages);
+                            List<string> regErrors = Fix.CheckRegistrations(ref packages);
                             if(regErrors.Count > 0)
                             {
                                 Console.WriteLine("============Registration Errors============");
@@ -182,7 +182,7 @@ namespace liveryfixer
                                 }
                             }
 
-                            Dictionary<string, List<string>> types = Tasks.ListTypes(ref packages);
+                            Dictionary<string, List<string>> types = Fix.ListTypes(ref packages);
                             if(types.Count > 0)
                             {
                                 Console.WriteLine("============Livery Types============");
@@ -196,7 +196,7 @@ namespace liveryfixer
                                 }
                             }
 
-                            List<string> icaoData = Tasks.VerifyICAOs(ref packages);
+                            List<string> icaoData = Fix.VerifyICAOs(ref packages);
                             if (icaoData.Count > 0)
                             {
                                 Console.WriteLine("============ICAO Errors============");
@@ -206,7 +206,7 @@ namespace liveryfixer
                                 }
                             }
 
-                            List<string> textureFixes = Tasks.FixTextureFallbacks(ref packages);    
+                            List<string> textureFixes = Fix.FixTextureFallbacks(ref packages);    
                             if (textureFixes.Count > 0)
                             {
                                 Console.WriteLine("============Texture Fallback Fixes============");
@@ -216,7 +216,7 @@ namespace liveryfixer
                                 }
                             }
 
-                            List<string> renameActions = Tasks.RenameFolders(ref packages);
+                            List<string> renameActions = Fix.RenameFolders(ref packages);
                             if (renameActions.Count > 0)
                             {
                                 Console.WriteLine("============Rename Actions============");

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace liveryfixer
 {
-    internal class Tasks
+    internal class Fix
     {
         public static List<string> CheckRegistrations(ref List<LiveryPackage> packages)
         {
