@@ -15,7 +15,7 @@ namespace liveryfixer
         {
             try
             {
-                Console.Write("Operation <extract,parse>: ");
+                Console.Write("Operation <extract,fix>: ");
                 string operation = Console.ReadLine();
 
                 switch (operation.Trim().ToLowerInvariant())
@@ -44,7 +44,7 @@ namespace liveryfixer
 
                             break;
                         }
-                    case "parse":
+                    case "fix":
                         {
                             List<LiveryPackage> packages = new List<LiveryPackage>();
 
