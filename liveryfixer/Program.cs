@@ -111,7 +111,7 @@ namespace liveryfixer
                                 }
 
                                 string airplaneDir = System.IO.Path.Combine(baseDir, "SimObjects\\Airplanes");
-                                foreach(string liveryDir in System.IO.Directory.GetDirectories(airplaneDir, "*"))
+                                foreach (string liveryDir in System.IO.Directory.GetDirectories(airplaneDir, "*"))
                                 {
                                     string aircraftCfgPath = System.IO.Path.Combine(liveryDir, "aircraft.cfg");
                                     if (System.IO.File.Exists(aircraftCfgPath))
@@ -121,9 +121,9 @@ namespace liveryfixer
                                         //parse aircraft.cfg to get title, ui_type, atc_id, icao_airline, and base_container from the [FLIGHTSIM.0] section
                                         LiveryGroup lGroup = new LiveryGroup();
                                         lGroup.AircraftCfgPath = aircraftCfgPath;
-                                        lGroup.BaseContainer = cfg.Section("VARIATION")?.Value("base_container");                                        
-                                        
-                                        foreach(var section in cfg.sections.Values.Where(s => s.Name.ToLowerInvariant().StartsWith("fltsim")))
+                                        lGroup.BaseContainer = cfg.Section("VARIATION")?.Value("base_container");
+
+                                        foreach (var section in cfg.sections.Values.Where(s => s.Name.ToLowerInvariant().StartsWith("fltsim")))
                                         {
                                             Livery livery = new Livery();
                                             livery.Title = section.Value("title");
@@ -143,7 +143,7 @@ namespace liveryfixer
                                                     CfgFile.CfgSection textureSection = textureCfg.Section("fltsim");
                                                     if (textureSection != null)
                                                     {
-                                                        foreach(CfgFile.CfgLine cfgLine in textureSection.Lines)
+                                                        foreach (CfgFile.CfgLine cfgLine in textureSection.Lines)
                                                         {
                                                             if (cfgLine.Key.StartsWith("fallback."))
                                                             {
@@ -168,9 +168,11 @@ namespace liveryfixer
                                 packages.Add(package);
                             }
 
+                            //Verification
                             Dictionary<string, List<string>> types = new Dictionary<string, List<string>>();
                             List<string> registrations = new List<string>();
 
+                            Console.WriteLine("============Registrations============");
                             foreach (LiveryPackage pkg in packages)
                             {
                                 foreach (LiveryGroup group in pkg.groups)
@@ -184,17 +186,18 @@ namespace liveryfixer
                                         if (!registrations.Contains(livery.Registration.ToLowerInvariant()))
                                             registrations.Add(livery.Registration.ToLowerInvariant());
                                         else
-                                            Console.WriteLine($"Duplicate registration found: {livery.Registration} in {livery.Path}");
+                                            Console.WriteLine($"\tDuplicate registration found: {livery.Registration} in {livery.Path}");
                                     }
                                 }
                             }
 
-                            Console.WriteLine("Types");
+                            Console.WriteLine("============Types============");
                             foreach (var kvp in types)
                             {
-                                Console.WriteLine(kvp.Key);
-                                foreach (string path in kvp.Value)                                {
-                                    Console.WriteLine("\t" + path);
+                                Console.WriteLine("\t" + kvp.Key);
+                                foreach (string path in kvp.Value)
+                                {
+                                    Console.WriteLine("\t\t" + path);
                                 }
                             }
 
