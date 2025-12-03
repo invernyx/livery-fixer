@@ -55,6 +55,7 @@ namespace liveryfixer
                             foreach (string baseDir in System.IO.Directory.GetDirectories(liveriesDir, "*"))
                             {
                                 LiveryPackage package = new LiveryPackage();
+                                package.Path = baseDir;
 
                                 string layoutPath = System.IO.Path.Combine(baseDir, "layout.json");
                                 string manifestPath = System.IO.Path.Combine(baseDir, "manifest.json");
@@ -159,18 +160,63 @@ namespace liveryfixer
                                             lGroup.Liveries.Add(livery);
                                         }
 
-                                        package.groups.Add(lGroup);
+                                        if (lGroup.Liveries.Count > 0)
+                                            package.groups.Add(lGroup);
                                     }
                                     else
                                         Console.WriteLine("Skipping directory without aircraft.cfg: " + liveryDir);
                                 }
 
-                                packages.Add(package);
+                                if (package.groups.Count > 0)
+                                    packages.Add(package);
+                            }
+
+                            //Renaming Package Directories
+                            foreach (LiveryPackage pkg in packages)
+                            {
+                                string desName = Options.packagePrefix;
+                                if (pkg.groups.Count > 1)
+                                {
+                                    desName += string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.Type.Replace("\"", ""))).Distinct());
+                                    desName += "-" + string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.AirlineICAO.Replace("\"", ""))).Distinct());
+                                    desName += "-pack";
+                                }
+                                else
+                                {
+                                    if (pkg.groups[0].Liveries.Count > 1)
+                                    {
+                                        desName += pkg.groups[0].Liveries[0].Type.Replace("\"", "") + " - ";
+                                        desName += string.Join(" - ", pkg.groups[0].Liveries.SelectMany(l => l.AirlineICAO.Replace("\"", "")).Distinct());
+                                        desName += "-pack";
+                                    }
+                                    else
+                                    {
+                                        string icao = pkg.groups[0].Liveries[0].AirlineICAO.Replace("\"", "");                                        
+                                        desName += pkg.groups[0].Liveries[0].Type.Replace("\"", "") + " - " + (icao.Length > 0 ? icao + "-" : "") +  pkg.groups[0].Liveries[0].Registration.Replace("\"", "");
+                                    }
+                                }
+
+                                desName = desName.Replace(" ", "").ToLowerInvariant();
                             }
 
                             //Verification
                             Dictionary<string, List<string>> types = new Dictionary<string, List<string>>();
                             List<string> registrations = new List<string>();
+
+                            Console.WriteLine("============Missing Airline ICAO============");
+                            foreach (LiveryPackage pkg in packages)
+                            {
+                                foreach (LiveryGroup group in pkg.groups)
+                                {
+                                    foreach (Livery livery in group.Liveries)
+                                    {
+                                        if (string.IsNullOrEmpty(livery.AirlineICAO?.Replace("\"", "")))
+                                        {
+                                            Console.WriteLine($"\tMissing Airline ICAO for registration: {livery.Registration} in {livery.Path}");
+                                        }
+                                    }
+                                }
+                            }
 
                             Console.WriteLine("============Registrations============");
                             foreach (LiveryPackage pkg in packages)

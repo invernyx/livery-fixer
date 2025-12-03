@@ -54,6 +54,7 @@
     <Compile Include="Livery.cs" />
     <Compile Include="LiveryGroup.cs" />
     <Compile Include="LiveryPackage.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
