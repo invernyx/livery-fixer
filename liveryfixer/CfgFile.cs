@@ -8,8 +8,6 @@ namespace liveryfixer
 {
     internal class CfgFile
     {
-        const string LINE_END = "\n";
-
         public class CfgLine
         {
             public string Key;
@@ -91,7 +89,7 @@ namespace liveryfixer
                 {
                     if (sections.ContainsKey(currSection) == false)
                         sections[currSection] = new CfgSection() { Name = currSection };
-                    sections[currSection].Lines.Add(new CfgLine(LINE_END, null));
+                    sections[currSection].Lines.Add(new CfgLine("", null));
                 }
             }
         }
