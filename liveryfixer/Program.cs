@@ -85,9 +85,9 @@ namespace liveryfixer
                 string desName = Options.packagePrefix;
                 if (pkg.groups.Count > 1)
                 {
-                    desName += string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.Type.Replace("\"", ""))).Distinct());
-                    desName += "-" + string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.AirlineICAO.Replace("\"", ""))).Distinct());
-                    desName += "-pack";
+                    desName += string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.Type.Replace("\"", ""))).Distinct()) + "-";
+                    desName += string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.AirlineICAO.Replace("\"", ""))).Distinct());
+                    desName += (desName.EndsWith("-") == false ? "-" : "") + "pack";
                 }
                 else
                 {
@@ -105,6 +105,8 @@ namespace liveryfixer
                 }
 
                 desName = desName.Replace(" ", "").ToLowerInvariant();
+
+                int i = 2 * 2;
             }
 
             return actionsTaken;
