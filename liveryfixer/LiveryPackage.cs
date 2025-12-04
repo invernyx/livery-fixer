@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace liveryfixer
@@ -42,17 +43,10 @@ namespace liveryfixer
 
                 //Read manifest.json
                 {
-                    string manifestJson = System.IO.File.ReadAllText(manifestPath);
-
-                    int creatorIndex = manifestJson.IndexOf("\"creator\":");
-                    if (creatorIndex != -1)
+                    Dictionary<string, object> manifest = JsonSerializer.Deserialize<Dictionary<string, object>>(System.IO.File.ReadAllText(manifestPath));
+                    if (manifest.ContainsKey("creator"))
                     {
-                        int startIndex = manifestJson.IndexOf("\"", creatorIndex + 10) + 1;
-                        int endIndex = manifestJson.IndexOf("\"", startIndex);
-
-                        string creator = manifestJson.Substring(startIndex, endIndex - startIndex);
-                        package.Creator = creator;
-
+                        package.Creator = manifest["creator"].ToString();
                     }
                     else
                     {
@@ -60,15 +54,9 @@ namespace liveryfixer
                         continue;
                     }
 
-                    int titleIndex = manifestJson.IndexOf("\"title\":");
-                    if (titleIndex != -1)
+                    if (manifest.ContainsKey("title"))
                     {
-                        int startIndex = manifestJson.IndexOf("\"", titleIndex + 8) + 1;
-                        int endIndex = manifestJson.IndexOf("\"", startIndex);
-
-                        string title = manifestJson.Substring(startIndex, endIndex - startIndex);
-                        package.Title = title;
-
+                        package.Title = manifest["title"].ToString();
                     }
                     else
                     {
