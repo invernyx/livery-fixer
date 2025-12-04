@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -221,6 +222,47 @@ namespace liveryfixer
 
                             break;
                         }
+                    case "find":
+                        {
+                            string sourceDir = GetInput("Source Dir");
+                            List<LiveryPackage> packages = LiveryPackage.GetLiveryPackages(sourceDir);                            
+                            while(true)
+                            {
+                                Console.Write("Registration: ");
+                                string reg = Console.ReadLine();
+
+                                if(reg == "quit")
+                                {
+                                    break;
+                                }
+
+                                foreach(var pkg in packages)
+                                {
+                                    foreach(var group in pkg.groups)
+                                    {
+                                        foreach(var liv in group.Liveries)
+                                        {
+                                            if(liv.Registration.Replace("\"", "").ToLowerInvariant() == reg.ToLowerInvariant())
+                                            {
+                                                Console.WriteLine($"{reg} exists in package {pkg.Title}, livery title: {liv.Title}, {liv.Path}");
+
+                                                try
+                                                {
+                                                    Process.Start(liv.Path);
+                                                }
+                                                catch(Exception ex)
+                                                {
+                                                    Console.WriteLine("Error: " + ex.Message);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                               
+                            }
+                        }
+                        break;
                     case "list":
                         {
                             string sourceDir = GetInput("Source Dir");
