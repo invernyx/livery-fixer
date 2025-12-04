@@ -193,7 +193,6 @@ namespace liveryfixer
         public static List<string> RenameFolders(ref List<LiveryPackage> packages)
         {
             List<string> actionsTaken = new List<string>();
-            return actionsTaken;
 
             foreach (LiveryPackage pkg in packages)
             {
