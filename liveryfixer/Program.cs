@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -254,6 +256,34 @@ namespace liveryfixer
                                 {
                                     Console.WriteLine("\t" + fix);
                                 }
+                            }
+
+                            foreach (LiveryPackage pkg in packages)
+                            {
+                                try
+                                {
+                                    Console.WriteLine("Regenerating layout.json for " + pkg.Path);
+
+                                    ProcessStartInfo st = new ProcessStartInfo();
+                                    st.FileName = "MSFSLayoutGenerator.exe";
+                                    st.Arguments = Path.Combine(pkg.Path, "layout.json");
+                                    st.RedirectStandardOutput = true;
+                                    st.RedirectStandardError = true;
+                                    st.UseShellExecute = false;
+                                    Process proc = Process.Start(st);
+                                    proc.WaitForExit();
+                                    string output = proc.StandardOutput.ReadToEnd().Trim(new char[] { '\n', '\r' });
+                                    string error = proc.StandardError.ReadToEnd().Trim(new char[] { '\n', '\r' });
+                                    
+                                    if (output.Length > 0 || error.Length > 0)
+                                    {
+                                        Console.WriteLine("\t"+ output + (error.Length > 0 ? ", " + error : ""));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("\tError generating layout for " + pkg.Path + ": " + ex.Message);
+                                }                                
                             }
                             break;
                         }

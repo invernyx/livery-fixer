@@ -245,6 +245,9 @@ namespace liveryfixer
         {
             List<string> actionsTaken = new List<string>();
 
+            if(Options.renamePackage == false)
+                return actionsTaken;
+
             foreach (LiveryPackage pkg in packages)
             {
                 string desName = Options.packagePathPrefix;

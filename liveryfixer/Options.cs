@@ -8,6 +8,8 @@ namespace liveryfixer
 {
     internal class Options
     {
+        public static bool renamePackage = true;
+
         public static string packagePathPrefix = "tfdidesign-aircraft-";
 
         public static Dictionary<string, List<string>> requiredTextureFallbacksByType = new Dictionary<string, List<string>>()
