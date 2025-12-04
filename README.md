@@ -5,7 +5,7 @@ A small CLI utility to inspect, fix, and package Microsoft Flight Simulator live
 ## Requirements
 
 - .NET Framework 4.7.2
-- `MSFSLayoutGenerator.exe` available on `PATH` or in the working directory (used to regenerate `layout.json`)
+- The specific version of `MSFSLayoutGenerator.exe` included available on `PATH` or in the working directory (used to regenerate `layout.json`)
 
 ## Quick usage
 
@@ -19,10 +19,10 @@ A small CLI utility to inspect, fix, and package Microsoft Flight Simulator live
 
 Common keys:
 
-- `--options <path>` — Load an options JSON file. If omitted, the program uses the default `new Options()`.
-- `--operation <extract|fix|pack>` — Select an operation instead of typing it interactively.
-- `--sourcedir <path>` — Source directory for `extract`, `fix`, and `pack` operations.
-- `--outputdir <path>` — Output directory for `extract` and `pack` operations.
+- `--options <path>` Load an options JSON file. If omitted, the program uses the default `new Options()`.
+- `--operation <extract|fix|pack>` Select an operation instead of typing it interactively.
+- `--sourcedir <path>` Source directory for `extract`, `fix`, and `pack` operations.
+- `--outputdir <path>` Output directory for `extract` and `pack` operations.
 
 If a value contains spaces, quote it: `"C:\My Liveries"`.
 
@@ -71,7 +71,7 @@ liveryfixer.exe --operation pack --sourcedir "C:\path\to\liveries" --outputdir "
 ## Notes and troubleshooting
 
 - The program prints errors and actions to the console; review output for fixes or failures.
-- Ensure `MSFSLayoutGenerator.exe` is available for successful `layout.json` regeneration.
+- Ensure the specific version `MSFSLayoutGenerator.exe` included is available for successful `layout.json` regeneration.
 - Use quotes for argument values that contain spaces.
 
 ## Contributing
