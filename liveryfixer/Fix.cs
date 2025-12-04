@@ -54,8 +54,7 @@ namespace liveryfixer
         public static List<string> VerifyICAOs(ref List<LiveryPackage> packages)
         {
             List<string> errors = new List<string>();
-
-            Console.WriteLine("============Missing Airline ICAO============");
+            
             foreach (LiveryPackage pkg in packages)
             {
                 foreach (LiveryGroup group in pkg.groups)
@@ -73,9 +72,120 @@ namespace liveryfixer
             return errors;
         }
 
+        private static List<string> GetRequiredFallbacks(string type)
+        {
+            List<string> strings = new List<string>();
+            if (Options.requiredTextureFallbacksByType.ContainsKey(type))            
+                strings.AddRange(Options.requiredTextureFallbacksByType[type]);
+            if (Options.requiredTextureFallbacksByType.ContainsKey(""))
+                strings.AddRange(Options.requiredTextureFallbacksByType[""]);
+            return strings;
+        }
+
+        private static List<string> GetUnusedFallbacks(string type)
+        {
+            List<string> strings = new List<string>();
+            if (Options.unneededTextureFallbacksByType.ContainsKey(type))
+                strings.AddRange(Options.unneededTextureFallbacksByType[type]);
+            if (Options.unneededTextureFallbacksByType.ContainsKey(""))
+                strings.AddRange(Options.unneededTextureFallbacksByType[""]);
+            return strings;
+        }
+
         public static List<string> FixTextureFallbacks(ref List<LiveryPackage> packages)
         {
             List<string> actionsTaken = new List<string>();
+
+            for (int i = 0; i < packages.Count; i++)
+            {
+                for(int r = 0; r < packages[i].groups.Count; r++)
+                {
+                    for(int l = 0; l < packages[i].groups[r].Liveries.Count; l++)
+                    {
+                        Livery livery = packages[i].groups[r].Liveries[l];
+                        string type = livery.Type.Replace("\"", "").ToLowerInvariant();
+
+                        if (Options.requiredTextureFallbacksByType.ContainsKey(type))
+                        {
+                            bool modified = false;
+                            if (livery.TextureFallbacks == null)
+                            {
+                                livery.TextureFallbacks = new List<string>();
+                                modified = true;
+                            }
+
+                            // Remove unwanted fallbacks
+                            List<string> unneededFallbacks = GetUnusedFallbacks(type);
+                            foreach (string fallback in unneededFallbacks)
+                            {
+                                string toRemove = fallback.Trim().Replace("/", "\\").ToLowerInvariant();
+                                for (int f = 0; f < livery.TextureFallbacks.Count;)
+                                {
+                                    string thisFb = livery.TextureFallbacks[f].Trim().Replace("/", "\\").ToLowerInvariant();
+                                    if (thisFb == toRemove)
+                                    {
+                                        livery.TextureFallbacks.RemoveAt(f);
+                                        actionsTaken.Add($"Removed unneeded texture fallback '{fallback}' from livery '{livery.Registration.Replace("\"", "")}' in package '{packages[i].Path}'");
+                                        modified = true;
+                                    }
+                                    else
+                                        f++;
+                                }
+                            }
+
+                            //Add required fallbacks
+                            List<string> requiredFallbacks = GetRequiredFallbacks(type);
+                            foreach (string fallback in requiredFallbacks)
+                            {
+                                string toAdd = fallback.Trim().Replace("/", "\\").ToLowerInvariant();
+                                for (int f = 0; f < livery.TextureFallbacks.Count; f++)
+                                {
+                                    if (livery.TextureFallbacks[f].Trim().Replace("/", "\\").ToLowerInvariant() == toAdd)
+                                    {
+                                        toAdd = null;
+                                        break;
+                                    }
+                                }
+                                if (toAdd != null)
+                                {
+                                    livery.TextureFallbacks.Add(fallback);
+                                    actionsTaken.Add($"Added missing texture fallback '{fallback}' to livery '{livery.Registration.Replace("\"", "")}' in package '{packages[i].Path}'");
+                                    modified = true;
+                                }
+                            }
+
+                            packages[i].groups[r].Liveries[l] = livery;
+                            if (modified)
+                            {
+                                actionsTaken.Add($"Updated texture fallbacks for livery '{livery.Registration}' in package '{packages[i].Path}'");
+
+                                //rewrite texture.cfg
+                                CfgFile textureCfg = new CfgFile(System.IO.Path.Combine(livery.Path, "texture.cfg"));
+                                for (int c = 0; c < textureCfg.sections.Count; c++)
+                                {
+                                    if (textureCfg.sections.ElementAt(c).Key.StartsWith("fltsim"))
+                                    {
+                                        textureCfg.sections[textureCfg.sections.ElementAt(c).Key].Lines.RemoveAll(line => line.Key.ToLowerInvariant().Trim().StartsWith("fallback."));
+                                        for (int f = 0; f < livery.TextureFallbacks.Count; f++)
+                                        {
+                                            textureCfg.sections[textureCfg.sections.ElementAt(c).Key].Lines.Add(new CfgFile.CfgLine($"fallback.{f + 1}", $"{livery.TextureFallbacks[f]}"));
+                                        }
+                                    }
+                                }
+
+                                try
+                                {
+                                    System.IO.File.WriteAllText(System.IO.Path.Combine(livery.Path, "texture.cfg"), textureCfg.ToString());
+                                }
+                                catch (Exception ex)
+                                {
+                                    actionsTaken.Add($"Error: Failed to write updated texture.cfg for livery '{livery.Registration}' in package '{packages[i].Path}': {ex.Message}");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             return actionsTaken;
         }
@@ -83,10 +193,11 @@ namespace liveryfixer
         public static List<string> RenameFolders(ref List<LiveryPackage> packages)
         {
             List<string> actionsTaken = new List<string>();
+            return actionsTaken;
 
             foreach (LiveryPackage pkg in packages)
             {
-                string desName = Options.packagePrefix;
+                string desName = Options.packagePathPrefix;
                 if (pkg.groups.Count > 1)
                 {
                     desName += string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.Type.Replace("\"", ""))).Distinct()) + "-";

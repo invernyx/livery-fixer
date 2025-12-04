@@ -122,6 +122,7 @@ namespace liveryfixer
                                         //parse aircraft.cfg to get title, ui_type, atc_id, icao_airline, and base_container from the [FLIGHTSIM.0] section
                                         LiveryGroup lGroup = new LiveryGroup();
                                         lGroup.AircraftCfgPath = aircraftCfgPath;
+                                        lGroup.Path = liveryDir;
                                         lGroup.BaseContainer = cfg.Section("VARIATION")?.Value("base_container");
 
                                         foreach (var section in cfg.sections.Values.Where(s => s.Name.ToLowerInvariant().StartsWith("fltsim")))
@@ -132,26 +133,31 @@ namespace liveryfixer
                                             livery.Type = section.Value("ui_type");
                                             livery.Registration = section.Value("atc_id");
                                             livery.AirlineICAO = section.Value("icao_airline");
-                                            livery.Path = liveryDir;
-
-                                            string textureDir = section.Value("texture").Trim(new char[] { '\"' });
-                                            if (!string.IsNullOrEmpty(textureDir))
                                             {
-                                                string textureCfgPath = System.IO.Path.Combine(liveryDir, "texture." + textureDir, "texture.cfg");
-                                                if (System.IO.File.Exists(textureCfgPath))
+                                                string textureDir = section.Value("texture").Trim(new char[] { '\"' });
+                                                if (!string.IsNullOrEmpty(textureDir))
                                                 {
-                                                    CfgFile textureCfg = new CfgFile(textureCfgPath);
-                                                    CfgFile.CfgSection textureSection = textureCfg.Section("fltsim");
-                                                    if (textureSection != null)
+                                                    textureDir = "texture." + textureDir;
+                                                }
+                                                else
+                                                    textureDir = "texture";
+                                                livery.Path = System.IO.Path.Combine(liveryDir, textureDir);
+                                            }
+
+                                            string textureCfgPath = System.IO.Path.Combine(livery.Path, "texture.cfg");
+                                            if (System.IO.File.Exists(textureCfgPath))
+                                            {
+                                                CfgFile textureCfg = new CfgFile(textureCfgPath);
+                                                CfgFile.CfgSection textureSection = textureCfg.Section("fltsim");
+                                                if (textureSection != null)
+                                                {
+                                                    foreach (CfgFile.CfgLine cfgLine in textureSection.Lines)
                                                     {
-                                                        foreach (CfgFile.CfgLine cfgLine in textureSection.Lines)
+                                                        if (cfgLine.Key.StartsWith("fallback."))
                                                         {
-                                                            if (cfgLine.Key.StartsWith("fallback."))
-                                                            {
-                                                                if (livery.TextureFallbacks == null)
-                                                                    livery.TextureFallbacks = new List<string>();
-                                                                livery.TextureFallbacks.Add(cfgLine.Value);
-                                                            }
+                                                            if (livery.TextureFallbacks == null)
+                                                                livery.TextureFallbacks = new List<string>();
+                                                            livery.TextureFallbacks.Add(cfgLine.Value);
                                                         }
                                                     }
                                                 }
