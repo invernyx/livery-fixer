@@ -1,0 +1,93 @@
+{
+  "renamePackage": true,
+  "packagePathPrefix": "tfdidesign-aircraft-",
+  "requiredTextureFallbacksByType": {
+    "md-11 ge": [
+      "..\\..\\..\\..\\texture",
+      "..\\..\\..\\..\\texture\\detailMap",
+      "..\\..\\..\\..\\texture\\AS1000",
+      "..\\..\\..\\..\\texture\\Glass",
+      "..\\..\\..\\..\\texture\\Lights",
+      "..\\..\\..\\..\\texture\\Planes_Generic",
+      "..\\..\\TFDi_Design_MD-11\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11\\texture.CABIN",
+      "..\\..\\TFDi_Design_MD-11_GE\\texture.BASE"
+    ],
+    "md-11f ge": [
+      "..\\..\\..\\..\\texture",
+      "..\\..\\..\\..\\texture\\detailMap",
+      "..\\..\\..\\..\\texture\\AS1000",
+      "..\\..\\..\\..\\texture\\Glass",
+      "..\\..\\..\\..\\texture\\Lights",
+      "..\\..\\..\\..\\texture\\Planes_Generic",
+      "..\\..\\TFDi_Design_MD-11\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11\\texture.CABIN",
+      "..\\..\\TFDi_Design_MD-11F_GE\\texture.BASE"
+    ],
+    "md-11f pw": [
+      "..\\..\\..\\..\\texture",
+      "..\\..\\..\\..\\texture\\detailMap",
+      "..\\..\\..\\..\\texture\\AS1000",
+      "..\\..\\..\\..\\texture\\Glass",
+      "..\\..\\..\\..\\texture\\Lights",
+      "..\\..\\..\\..\\texture\\Planes_Generic",
+      "..\\..\\TFDi_Design_MD-11\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11\\texture.CABIN",
+      "..\\..\\TFDi_Design_MD-11F_PW\\texture.BASE"
+    ],
+    "md-11 pw": [
+      "..\\..\\..\\..\\texture",
+      "..\\..\\..\\..\\texture\\detailMap",
+      "..\\..\\..\\..\\texture\\AS1000",
+      "..\\..\\..\\..\\texture\\Glass",
+      "..\\..\\..\\..\\texture\\Lights",
+      "..\\..\\..\\..\\texture\\Planes_Generic",
+      "..\\..\\TFDi_Design_MD-11\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11\\texture.CABIN",
+      "..\\..\\TFDi_Design_MD-11_PW\\texture.BASE"
+    ]
+  },
+  "unneededTextureFallbacksByType": {
+    "": [
+      "..\\..\\TFDi_Design_MD-11_GE\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11_GE\\texture.Cabin",
+      "..\\..\\TFDi_Design_MD-11F_GE\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11F_GE\\texture.Cabin",
+      "..\\..\\TFDi_Design_MD-11F_PW\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11F_PW\\texture.Cabin",
+      "..\\..\\TFDi_Design_MD-11_PW\\texture.VC",
+      "..\\..\\TFDi_Design_MD-11_PW\\texture.Cabin"
+    ],
+    "md-11 ge": [
+      "..\\..\\TFDi_Design_MD-11F_GE\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11F_PW\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11_PW\\texture.BASE"
+    ],
+    "md-11f ge": [
+      "..\\..\\TFDi_Design_MD-11_GE\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11F_PW\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11_PW\\texture.BASE"
+    ],
+    "md-11f pw": [
+      "..\\..\\TFDi_Design_MD-11_GE\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11F_GE\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11_PW\\texture.BASE"
+    ],
+    "md-11 pw": [
+      "..\\..\\TFDi_Design_MD-11_GE\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11F_GE\\texture.BASE",
+      "..\\..\\TFDi_Design_MD-11F_PW\\texture.BASE"
+    ]
+  },
+  "creatorNameCorrections": {
+    "WhiskeyThrottle | HUES": "HUES",
+    "Hues, TFDi Design": "HUES",
+    "WhiskeyThrottle, TFDi Design": "HUES",
+    "SilkySmooth, TFDi Design": "HUES",
+    "TFDi Design | HUES": "HUES"
+  }
+}

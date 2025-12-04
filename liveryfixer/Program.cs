@@ -13,22 +13,55 @@ namespace liveryfixer
 {
     internal class Program
     {
+        static Dictionary<string, string> arguments = new Dictionary<string, string>();
+        static string GetInput(string name)
+        {
+            string key = name.ToLowerInvariant().Replace(" ", "");
+            if (arguments.ContainsKey(key))
+            {
+                return arguments[key];
+            }
+            else
+            {
+                Console.Write(name + ": ");
+                return Console.ReadLine();
+            }
+        }
+
         static void Main(string[] args)
         {
+            for(int i = 0; i < args.Length; i++)
+            {
+                string arg = args[i];
+                if(arg.StartsWith("--"))
+                {
+                    string key = arg.Substring(2);
+                    string value = null;
+                    if(i + 1 < args.Length)
+                    {
+                        value = args[i + 1];
+                        i++;
+                    }
+                    arguments[key] = value;
+                }
+            }
+
             try
             {
-                Console.Write("Operation <extract,fix,pack>: ");
-                string operation = Console.ReadLine();
+                if(arguments.ContainsKey("options"))                
+                   Options.current = Options.LoadOptions(arguments["options"]);
+                else
+                     Options.current = new Options();
+
+                string operation = GetInput("Operation");
 
                 switch (operation.Trim().ToLowerInvariant())
                 {
                     case "extract":
                         {
-                            Console.Write("Source dir: ");
-                            string sourceDir = Console.ReadLine();
+                            string sourceDir = GetInput("Source Dir") ;
 
-                            Console.Write("Destination dir: ");
-                            string destDir = Console.ReadLine();
+                            string destDir = GetInput("Output Dir");
 
                             Parallel.ForEach(System.IO.Directory.GetFiles(sourceDir, "*.zip", System.IO.SearchOption.AllDirectories), (file) =>
                             {
@@ -50,8 +83,7 @@ namespace liveryfixer
                         {
                             List<LiveryPackage> packages = new List<LiveryPackage>();
 
-                            Console.Write("Livery dir: ");
-                            string liveriesDir = Console.ReadLine();
+                            string liveriesDir = GetInput("Source Dir");
 
                             //Traverse all directories in the liveryDir and within each one, verify there is a manifest.json and layout.json, printing an error for violations
                             foreach (string baseDir in System.IO.Directory.GetDirectories(liveriesDir, "*"))
@@ -289,11 +321,8 @@ namespace liveryfixer
                         }
                     case "pack":
                         {
-                            Console.Write("Livery dir: ");
-                            string liveriesDir = Console.ReadLine();
-
-                            Console.Write("Output dir: ");
-                            string outputDir = Console.ReadLine();
+                            string liveriesDir = GetInput("Source Dir");
+                            string outputDir = GetInput("Output Dir");
 
                             Parallel.ForEach(System.IO.Directory.GetDirectories(liveriesDir, "*", System.IO.SearchOption.TopDirectoryOnly), (dir) =>
                             {

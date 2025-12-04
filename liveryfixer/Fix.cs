@@ -64,12 +64,12 @@ namespace liveryfixer
             {
                 try
                 {
-                    if(Options.creatorNameCorrections.ContainsKey(pkg.Creator))
+                    if(Options.current.creatorNameCorrections.ContainsKey(pkg.Creator))
                     {
                         Dictionary<string, object> manifest = JsonSerializer.Deserialize<Dictionary<string, object>>(System.IO.File.ReadAllText(System.IO.Path.Combine(pkg.Path, "manifest.json")), jsonOptions);
                         if (manifest.ContainsKey("creator"))
                         {
-                            manifest["creator"] = Options.creatorNameCorrections[pkg.Creator];
+                            manifest["creator"] = Options.current.creatorNameCorrections[pkg.Creator];
                             actionsTaken.Add($"Updated creator in manifest.json of package '{pkg.Path}' to '{pkg.Title}'");
                             System.IO.File.WriteAllText(System.IO.Path.Combine(pkg.Path, "manifest.json"), JsonSerializer.Serialize(manifest, jsonOptions));
                         }                                                
@@ -126,20 +126,20 @@ namespace liveryfixer
         private static List<string> GetRequiredFallbacks(string type)
         {
             List<string> strings = new List<string>();
-            if (Options.requiredTextureFallbacksByType.ContainsKey(type))            
-                strings.AddRange(Options.requiredTextureFallbacksByType[type]);
-            if (Options.requiredTextureFallbacksByType.ContainsKey(""))
-                strings.AddRange(Options.requiredTextureFallbacksByType[""]);
+            if (Options.current.requiredTextureFallbacksByType.ContainsKey(type))            
+                strings.AddRange(Options.current.requiredTextureFallbacksByType[type]);
+            if (Options.current.requiredTextureFallbacksByType.ContainsKey(""))
+                strings.AddRange(Options.current.requiredTextureFallbacksByType[""]);
             return strings;
         }
 
         private static List<string> GetUnusedFallbacks(string type)
         {
             List<string> strings = new List<string>();
-            if (Options.unneededTextureFallbacksByType.ContainsKey(type))
-                strings.AddRange(Options.unneededTextureFallbacksByType[type]);
-            if (Options.unneededTextureFallbacksByType.ContainsKey(""))
-                strings.AddRange(Options.unneededTextureFallbacksByType[""]);
+            if (Options.current.unneededTextureFallbacksByType.ContainsKey(type))
+                strings.AddRange(Options.current.unneededTextureFallbacksByType[type]);
+            if (Options.current.unneededTextureFallbacksByType.ContainsKey(""))
+                strings.AddRange(Options.current.unneededTextureFallbacksByType[""]);
             return strings;
         }
 
@@ -156,7 +156,7 @@ namespace liveryfixer
                         Livery livery = packages[i].groups[r].Liveries[l];
                         string type = livery.Type.Replace("\"", "").ToLowerInvariant();
 
-                        if (Options.requiredTextureFallbacksByType.ContainsKey(type))
+                        if (Options.current.requiredTextureFallbacksByType.ContainsKey(type))
                         {
                             bool modified = false;
                             if (livery.TextureFallbacks == null)
@@ -245,12 +245,12 @@ namespace liveryfixer
         {
             List<string> actionsTaken = new List<string>();
 
-            if(Options.renamePackage == false)
+            if(Options.current.renamePackage == false)
                 return actionsTaken;
 
             foreach (LiveryPackage pkg in packages)
             {
-                string desName = Options.packagePathPrefix;
+                string desName = Options.current.packagePathPrefix;
                 if (pkg.groups.Count > 1)
                 {
                     desName += string.Join(" - ", (pkg.groups.SelectMany(g => g.Liveries).Select(l => l.Type.Replace("\"", ""))).Distinct()) + "-";
