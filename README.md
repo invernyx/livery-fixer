@@ -1,11 +1,11 @@
 # liveryfixer
 
-A small CLI utility to inspect, fix, list, and package Microsoft Flight Simulator livery packages. Supports four main operations: `extract`, `fix`, `pack`, and `list`.
+A small CLI utility to inspect, fix, list, find, and package Microsoft Flight Simulator livery packages. Supports five main operations: `extract`, `fix`, `pack`, `list`, and `find`.
 
 ## Requirements
 
 - .NET Framework 4.7.2
-- `MSFSLayoutGenerator.exe` available on `PATH` or in the working directory (used to regenerate `layout.json` during `fix`)
+- `MSFSLayoutGenerator.exe` (the specific version included with this repository/package) available on `PATH` or in the working directory (used to regenerate `layout.json` during `fix`)
 
 ## Build
 
@@ -21,8 +21,8 @@ A small CLI utility to inspect, fix, list, and package Microsoft Flight Simulato
 Common keys
 
 - `--options <path>` — Load an options JSON file. If omitted the program will use default options.
-- `--operation <extract|fix|pack|list>` — Select the operation to run instead of typing it interactively.
-- `--sourcedir <path>` — Source directory used by `extract`, `fix`, and `pack` operations.
+- `--operation <extract|fix|pack|list|find>` — Select the operation to run instead of typing it interactively.
+- `--sourcedir <path>` — Source directory used by `extract`, `fix`, `pack`, and `find` operations.
 - `--outputdir <path>` — Output directory used by `extract` and `pack` operations.
 - `--outputfile <path>` — Output file used by the `list` operation.
 
@@ -51,6 +51,9 @@ liveryfixer.exe --operation pack --sourcedir "C:\path\to\liveries" --outputdir "
 
 # Create a JSON file listing detected liveries
 liveryfixer.exe --operation list --sourcedir "C:\path\to\liveries" --outputfile "C:\path\to\liveries.json"
+
+# Enter an interactive registration lookup session
+liveryfixer.exe --operation find --sourcedir "C:\path\to\liveries"
 ```
 
 ## Operations
@@ -66,7 +69,7 @@ liveryfixer.exe --operation list --sourcedir "C:\path\to\liveries" --outputfile 
 - Validates `manifest.json` has `content_type` equal to `livery` and reads `creator` and `title`.
 - Looks under `SimObjects\Airplanes` for aircraft folders, parses `aircraft.cfg` (using `CfgFile`) and any `texture.cfg` files to build an internal model of packages, groups, and liveries.
 - Runs a sequence of fix/inspection routines (see list below) and prints results to the console.
-- Attempts to regenerate `layout.json` for each package by invoking `MSFSLayoutGenerator.exe <path-to-layout.json>` and prints any output or errors.
+- Attempts to regenerate `layout.json` for each package by invoking `MSFSLayoutGenerator.exe <path-to-layout.json>` and prints any output or errors. The generator must be the specific `MSFSLayoutGenerator.exe` distributed with this package to ensure compatible output.
 
 Fix/inspection routines executed by `fix` (in order):
 
@@ -89,6 +92,14 @@ All routines print actions taken or detected errors to the console.
 
 - Scans `Source Dir` for valid livery packages and writes a JSON array of detected packages to the provided `Output File`.
 - The JSON output contains the internal `LiveryPackage` model (title, path, creator, groups, liveries, and texture fallback lists).
+
+### find
+
+- Starts an interactive prompt to search liveries by registration.
+- Requires `Source Dir` pointing to the root folder containing livery packages. The tool will build its internal package list and then prompt repeatedly for a `Registration:` value.
+- Enter a registration (e.g. `N12345`) to search. Matching liveries are printed with package title and livery path.
+- Enter `quit` to exit the `find` loop.
+- When a match is found the tool attempts to open the livery folder using `Process.Start(<livery folder path>)` (on Windows this opens File Explorer). This may fail on non-Windows platforms or restricted environments.
 
 ## Options (options.json)
 
@@ -129,7 +140,8 @@ The program will create a default `Options` instance if loading the JSON file fa
 
 ## Troubleshooting
 
-- Ensure `MSFSLayoutGenerator.exe` is reachable for `fix` to regenerate `layout.json` successfully.
+- Ensure the specific `MSFSLayoutGenerator.exe` included with this repository/package is reachable for `fix` to regenerate `layout.json` successfully.
+- The `find` operation attempts to open livery folders with the system default application; this works best on Windows where `Process.Start(path)` opens File Explorer.
 - Provide command-line keys in lowercase without spaces to avoid interactive prompts being required.
 - Review console output for details about what the tool changed or detected.
 
