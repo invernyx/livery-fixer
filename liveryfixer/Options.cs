@@ -12,6 +12,8 @@ namespace liveryfixer
     {
         public bool renamePackage { get; set; } = true;
 
+        public bool setContentType { get; set; } = true;
+
         public string packagePathPrefix { get; set; } = "";
 
         public Dictionary<string, List<string>> requiredTextureFallbacksByType { get; set; } = new Dictionary<string, List<string>>() {};

@@ -46,10 +46,13 @@ namespace liveryfixer
                     Dictionary<string, object> manifest = JsonSerializer.Deserialize<Dictionary<string, object>>(System.IO.File.ReadAllText(manifestPath));
                     if (manifest.ContainsKey("content_type"))
                     {
-                        if(manifest["content_type"].ToString().ToLowerInvariant().Trim() != "livery")
+                        if (Options.current.setContentType == false)
                         {
-                            Console.WriteLine($"Error: content_type is not 'livery' in manifest.json in {baseDir}");
-                            continue;
+                            if (manifest["content_type"].ToString().ToLowerInvariant().Trim() != "livery")
+                            {
+                                Console.WriteLine($"Error: content_type is not 'livery' in manifest.json in {baseDir}");
+                                continue;
+                            }
                         }
                     }
                     else
@@ -144,6 +147,18 @@ namespace liveryfixer
                 if (package.groups.Count > 0)
                     packages.Add(package);
             }
+
+
+            int total = 0;
+            foreach (var p in packages)
+            {
+                foreach (var g in p.groups)
+                {
+                    total += g.Liveries.Count;
+                }
+            }
+
+            Console.WriteLine($"Found {packages.Count} livery packages with a total of {total} liveries.");
 
             return packages;
         }

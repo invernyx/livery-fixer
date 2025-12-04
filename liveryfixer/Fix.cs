@@ -64,16 +64,28 @@ namespace liveryfixer
             {
                 try
                 {
-                    if(Options.current.creatorNameCorrections.ContainsKey(pkg.Creator))
+
+                    Dictionary<string, object> manifest = JsonSerializer.Deserialize<Dictionary<string, object>>(System.IO.File.ReadAllText(System.IO.Path.Combine(pkg.Path, "manifest.json")), jsonOptions);
+                    if (Options.current.creatorNameCorrections.ContainsKey(pkg.Creator))
                     {
-                        Dictionary<string, object> manifest = JsonSerializer.Deserialize<Dictionary<string, object>>(System.IO.File.ReadAllText(System.IO.Path.Combine(pkg.Path, "manifest.json")), jsonOptions);
                         if (manifest.ContainsKey("creator"))
                         {
                             manifest["creator"] = Options.current.creatorNameCorrections[pkg.Creator];
                             actionsTaken.Add($"Updated creator in manifest.json of package '{pkg.Path}' to '{pkg.Title}'");
                             System.IO.File.WriteAllText(System.IO.Path.Combine(pkg.Path, "manifest.json"), JsonSerializer.Serialize(manifest, jsonOptions));
-                        }                                                
-                    }                    
+                        }
+                    }
+
+                    if (Options.current.setContentType == true)
+                    {
+                        if (manifest.ContainsKey("content_type") && manifest["content_type"].ToString().ToLowerInvariant().Trim() != "livery")
+                        {
+                            manifest["content_type"] = "livery";
+                            actionsTaken.Add($"Updated content_type in manifest.json of package '{pkg.Path}' to 'livery'");
+                            System.IO.File.WriteAllText(System.IO.Path.Combine(pkg.Path, "manifest.json"), JsonSerializer.Serialize(manifest, jsonOptions));
+                        }
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -105,7 +117,7 @@ namespace liveryfixer
         public static List<string> VerifyICAOs(ref List<LiveryPackage> packages)
         {
             List<string> errors = new List<string>();
-            
+
             foreach (LiveryPackage pkg in packages)
             {
                 foreach (LiveryGroup group in pkg.groups)
@@ -126,7 +138,7 @@ namespace liveryfixer
         private static List<string> GetRequiredFallbacks(string type)
         {
             List<string> strings = new List<string>();
-            if (Options.current.requiredTextureFallbacksByType.ContainsKey(type))            
+            if (Options.current.requiredTextureFallbacksByType.ContainsKey(type))
                 strings.AddRange(Options.current.requiredTextureFallbacksByType[type]);
             if (Options.current.requiredTextureFallbacksByType.ContainsKey(""))
                 strings.AddRange(Options.current.requiredTextureFallbacksByType[""]);
@@ -149,9 +161,9 @@ namespace liveryfixer
 
             for (int i = 0; i < packages.Count; i++)
             {
-                for(int r = 0; r < packages[i].groups.Count; r++)
+                for (int r = 0; r < packages[i].groups.Count; r++)
                 {
-                    for(int l = 0; l < packages[i].groups[r].Liveries.Count; l++)
+                    for (int l = 0; l < packages[i].groups[r].Liveries.Count; l++)
                     {
                         Livery livery = packages[i].groups[r].Liveries[l];
                         string type = livery.Type.Replace("\"", "").ToLowerInvariant();
@@ -245,7 +257,7 @@ namespace liveryfixer
         {
             List<string> actionsTaken = new List<string>();
 
-            if(Options.current.renamePackage == false)
+            if (Options.current.renamePackage == false)
                 return actionsTaken;
 
             foreach (LiveryPackage pkg in packages)

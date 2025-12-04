@@ -1,6 +1,7 @@
 {
   "renamePackage": true,
   "packagePathPrefix": "tfdidesign-aircraft-",
+  "setContentType": true,
   "requiredTextureFallbacksByType": {
     "md-11 ge": [
       "..\\..\\..\\..\\texture",
