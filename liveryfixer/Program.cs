@@ -17,7 +17,7 @@ namespace liveryfixer
         {
             try
             {
-                Console.Write("Operation <extract,fix>: ");
+                Console.Write("Operation <extract,fix,pack>: ");
                 string operation = Console.ReadLine();
 
                 switch (operation.Trim().ToLowerInvariant())
@@ -30,7 +30,7 @@ namespace liveryfixer
                             Console.Write("Destination dir: ");
                             string destDir = Console.ReadLine();
 
-                            foreach (string file in System.IO.Directory.GetFiles(sourceDir, "*.zip", System.IO.SearchOption.AllDirectories))
+                            Parallel.ForEach(System.IO.Directory.GetFiles(sourceDir, "*.zip", System.IO.SearchOption.AllDirectories), (file) =>
                             {
                                 Console.WriteLine($"Extracting {file}...");
                                 try
@@ -42,7 +42,7 @@ namespace liveryfixer
                                 {
                                     Console.WriteLine($"Error extracting {file}: {ex.Message}");
                                 }
-                            }
+                            });
 
                             break;
                         }
@@ -285,6 +285,40 @@ namespace liveryfixer
                                     Console.WriteLine("\tError generating layout for " + pkg.Path + ": " + ex.Message);
                                 }                                
                             }
+                            break;
+                        }
+                    case "pack":
+                        {
+                            Console.Write("Livery dir: ");
+                            string liveriesDir = Console.ReadLine();
+
+                            Console.Write("Output dir: ");
+                            string outputDir = Console.ReadLine();
+
+                            Parallel.ForEach(System.IO.Directory.GetDirectories(liveriesDir, "*", System.IO.SearchOption.TopDirectoryOnly), (dir) =>
+                            {
+                                string dirName = System.IO.Path.GetFileName(dir);
+
+                                if(System.IO.File.Exists(System.IO.Path.Combine(dir, "manifest.json")))
+                                {
+                                    string zipPath = System.IO.Path.Combine(outputDir, dirName + ".zip");
+                                    Console.WriteLine($"Packing {dir} to {zipPath}...");
+                                    try
+                                    {
+                                        if (System.IO.File.Exists(zipPath))
+                                        {
+                                            System.IO.File.Delete(zipPath);
+                                        }
+                                        ZipFile.CreateFromDirectory(dir, zipPath, CompressionLevel.Optimal, true);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"Error packing {dir}: {ex.Message}");
+                                    }
+                                }
+                                
+                            });
+
                             break;
                         }
                 }
