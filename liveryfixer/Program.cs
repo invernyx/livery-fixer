@@ -221,6 +221,24 @@ namespace liveryfixer
 
                             break;
                         }
+                    case "list":
+                        {
+                            string sourceDir = GetInput("Source Dir");
+                            string outputName = GetInput("Output File");
+                            List<LiveryPackage> packages = LiveryPackage.GetLiveryPackages(sourceDir);
+
+                            try
+                            {
+                                System.IO.File.WriteAllText(outputName, JsonSerializer.Serialize(packages, new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
+                                Console.WriteLine("Livery list written to " + outputName);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Error listing liveries: " + ex.Message);
+                            }
+
+                            break;
+                        }
                 }
             }
             catch (Exception ex)

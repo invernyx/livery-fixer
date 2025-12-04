@@ -44,6 +44,20 @@ namespace liveryfixer
                 //Read manifest.json
                 {
                     Dictionary<string, object> manifest = JsonSerializer.Deserialize<Dictionary<string, object>>(System.IO.File.ReadAllText(manifestPath));
+                    if (manifest.ContainsKey("content_type"))
+                    {
+                        if(manifest["content_type"].ToString().ToLowerInvariant().Trim() != "livery")
+                        {
+                            Console.WriteLine($"Error: content_type is not 'livery' in manifest.json in {baseDir}");
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error: content_type not found in manifest.json in {baseDir}");
+                        continue;
+                    }
+
                     if (manifest.ContainsKey("creator"))
                     {
                         package.Creator = manifest["creator"].ToString();
