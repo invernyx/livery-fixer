@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace liveryfixer
@@ -32,6 +33,7 @@ namespace liveryfixer
 
             return errors;
         }
+
         public static Dictionary<string, List<string>> ListCreators(ref List<LiveryPackage> packages)
         {
             Dictionary<string, List<string>> creators = new Dictionary<string, List<string>>();
@@ -50,6 +52,37 @@ namespace liveryfixer
             return creators;
         }
 
+        public static List<string> FixManifests(ref List<LiveryPackage> packages)
+        {
+            List<string> actionsTaken = new List<string>();
+
+            JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
+            jsonOptions.WriteIndented = true;
+            jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+
+            foreach (LiveryPackage pkg in packages)
+            {
+                try
+                {
+                    if(Options.creatorNameCorrections.ContainsKey(pkg.Creator))
+                    {
+                        Dictionary<string, object> manifest = JsonSerializer.Deserialize<Dictionary<string, object>>(System.IO.File.ReadAllText(System.IO.Path.Combine(pkg.Path, "manifest.json")), jsonOptions);
+                        if (manifest.ContainsKey("creator"))
+                        {
+                            manifest["creator"] = Options.creatorNameCorrections[pkg.Creator];
+                            actionsTaken.Add($"Updated creator in manifest.json of package '{pkg.Path}' to '{pkg.Title}'");
+                            System.IO.File.WriteAllText(System.IO.Path.Combine(pkg.Path, "manifest.json"), JsonSerializer.Serialize(manifest, jsonOptions));
+                        }                                                
+                    }                    
+                }
+                catch (Exception ex)
+                {
+                    actionsTaken.Add($"Error: Failed to update manifest.json in package '{pkg.Path}': {ex.Message}");
+                }
+
+            }
+            return actionsTaken;
+        }
 
         public static Dictionary<string, List<string>> ListTypes(ref List<LiveryPackage> packages)
         {

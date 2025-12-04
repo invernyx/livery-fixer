@@ -126,5 +126,14 @@ namespace liveryfixer
                 }
             }
         };
+
+        public static Dictionary<string, string> creatorNameCorrections = new Dictionary<string, string>()
+        {
+            { "WhiskeyThrottle | HUES", "HUES" },
+            { "Hues, TFDi Design", "HUES"},
+            { "WhiskeyThrottle, TFDi Design", "HUES" },
+            {"SilkySmooth, TFDi Design", "HUES" },
+            {"TFDi Design | HUES", "HUES" }
+        };
     }
 }

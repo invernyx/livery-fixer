@@ -245,6 +245,16 @@ namespace liveryfixer
                                     }
                                 }
                             }
+
+                            List<string> manifestFixes = Fix.FixManifests(ref packages);
+                            if (manifestFixes.Count > 0)
+                            {
+                                Console.WriteLine("============Manifest Fixes============");
+                                foreach (string fix in manifestFixes)
+                                {
+                                    Console.WriteLine("\t" + fix);
+                                }
+                            }
                             break;
                         }
                 }
