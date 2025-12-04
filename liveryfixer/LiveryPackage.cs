@@ -83,6 +83,11 @@ namespace liveryfixer
                 }
 
                 string airplaneDir = System.IO.Path.Combine(baseDir, "SimObjects\\Airplanes");
+                if(System.IO.Directory.Exists(airplaneDir) == false)
+                {
+                    Console.WriteLine($"Error: SimObjects\\Airplanes directory not found in {baseDir}");
+                    continue;
+                }
                 foreach (string liveryDir in System.IO.Directory.GetDirectories(airplaneDir, "*"))
                 {
                     string aircraftCfgPath = System.IO.Path.Combine(liveryDir, "aircraft.cfg");
