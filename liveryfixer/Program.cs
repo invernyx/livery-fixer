@@ -231,6 +231,20 @@ namespace liveryfixer
                                     Console.WriteLine("\t" + action);
                                 }
                             }
+
+                            Dictionary<string, List<string>> creators = Fix.ListCreators(ref packages);
+                            if (creators.Count > 0)
+                            {
+                                Console.WriteLine("============Livery Creators============");
+                                foreach (var creator in creators)
+                                {
+                                    Console.WriteLine($"\tCreator: {creator.Key}");
+                                    foreach (string path in creator.Value)
+                                    {
+                                        Console.WriteLine($"\t\t{path}");
+                                    }
+                                }
+                            }
                             break;
                         }
                 }

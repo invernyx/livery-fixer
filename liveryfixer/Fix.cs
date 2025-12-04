@@ -32,6 +32,24 @@ namespace liveryfixer
 
             return errors;
         }
+        public static Dictionary<string, List<string>> ListCreators(ref List<LiveryPackage> packages)
+        {
+            Dictionary<string, List<string>> creators = new Dictionary<string, List<string>>();
+            foreach (LiveryPackage pkg in packages)
+            {
+                foreach (LiveryGroup group in pkg.groups)
+                {
+                    foreach (Livery livery in group.Liveries)
+                    {
+                        if (!creators.ContainsKey(pkg.Creator))
+                            creators[pkg.Creator] = new List<string>();
+                        creators[pkg.Creator].Add(livery.Path);
+                    }
+                }
+            }
+            return creators;
+        }
+
 
         public static Dictionary<string, List<string>> ListTypes(ref List<LiveryPackage> packages)
         {
