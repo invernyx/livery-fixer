@@ -2,6 +2,7 @@
   "renamePackage": true,
   "packagePathPrefix": "tfdidesign-aircraft-",
   "setContentType": true,
+  "extractThumbnailWhenPacking": true,
   "requiredTextureFallbacksByType": {
     "md-11 ge": [
       "..\\..\\..\\..\\texture",

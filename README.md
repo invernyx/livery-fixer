@@ -46,7 +46,7 @@ liveryfixer.exe --operation extract --sourcedir "C:\path\to\zips" --outputdir "C
 # Fix liveries under a directory using options.json
 liveryfixer.exe --operation fix --sourcedir "C:\path\to\liveries" --options "C:\path\to\options.json"
 
-# Pack top-level livery folders that contain manifest.json into .zip files
+# Pack detected livery packages into .zip files (and optionally extract thumbnails)
 liveryfixer.exe --operation pack --sourcedir "C:\path\to\liveries" --outputdir "C:\path\to\outputzips"
 
 # Create a JSON file listing detected liveries
@@ -85,8 +85,9 @@ All routines print actions taken or detected errors to the console.
 
 ### pack
 
-- Traverses the top-level subfolders of `Source Dir` (non-recursive). For each folder containing `manifest.json`, creates a `.zip` archive with the folder name in `Output Dir`.
-- Packing runs in parallel.
+- Identifies valid livery packages under `Source Dir` (same detection logic as `fix`) and creates a `.zip` archive for each detected package into `Output Dir`.
+- Packing runs in parallel over the list of detected packages (not raw top-level folders).
+- Optionally extracts `thumbnail.jpg` from the first livery texture folder and copies it beside the generated `.zip` as `<packageName>.jpg` when `extractThumbnailWhenPacking` is enabled in the options.
 
 ### list
 
@@ -110,6 +111,7 @@ You can pass an options JSON file with `--options` to control behavior. Fields (
 - `requiredTextureFallbacksByType` (object) — dictionary keyed by livery `ui_type` (or empty string for defaults) with arrays of required fallback paths.
 - `unneededTextureFallbacksByType` (object) — dictionary keyed by livery `ui_type` (or empty string) with arrays of fallbacks to remove.
 - `creatorNameCorrections` (object) — mapping of incorrect creator names to corrected names used by `FixManifests`.
+- `extractThumbnailWhenPacking` (bool, default: `false`) — when `true`, the pack operation will try to copy `thumbnail.jpg` from the first detected texture folder of the package into the `Output Dir` alongside the generated `.zip` (named `<package>.jpg`).
 
 Example `options.json`
 
@@ -126,7 +128,8 @@ Example `options.json`
   },
   "creatorNameCorrections": {
     "old_creator": "Correct Creator Name"
-  }
+  },
+  "extractThumbnailWhenPacking": false
 }
 ```
 

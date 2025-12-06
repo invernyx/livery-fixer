@@ -196,30 +196,43 @@ namespace liveryfixer
                             string liveriesDir = GetInput("Source Dir");
                             string outputDir = GetInput("Output Dir");
 
-                            Parallel.ForEach(System.IO.Directory.GetDirectories(liveriesDir, "*", System.IO.SearchOption.TopDirectoryOnly), (dir) =>
+                            List<LiveryPackage> packges = LiveryPackage.GetLiveryPackages(liveriesDir);
+                            Parallel.ForEach(packges, (pkg) =>
                             {
-                                string dirName = System.IO.Path.GetFileName(dir);
-
-                                if(System.IO.File.Exists(System.IO.Path.Combine(dir, "manifest.json")))
+                                string dirName = System.IO.Path.GetFileName(pkg.Path);
+                                string zipPath = System.IO.Path.Combine(outputDir, dirName + ".zip");
+                                Console.WriteLine($"Packing {pkg.Path} to {zipPath}...");
+                                try
                                 {
-                                    string zipPath = System.IO.Path.Combine(outputDir, dirName + ".zip");
-                                    Console.WriteLine($"Packing {dir} to {zipPath}...");
-                                    try
+                                    if (System.IO.File.Exists(zipPath))
+                                        System.IO.File.Delete(zipPath);
+                                    ZipFile.CreateFromDirectory(pkg.Path, zipPath, CompressionLevel.Optimal, true);
+                                    if (Options.current.extractThumbnailWhenPacking)
                                     {
-                                        if (System.IO.File.Exists(zipPath))
+                                        try
                                         {
-                                            System.IO.File.Delete(zipPath);
+                                            string firstTexturePath = pkg.groups.FirstOrDefault()?.Liveries.FirstOrDefault()?.Path;
+                                            if (firstTexturePath != null)
+                                            {
+                                                string source = System.IO.Path.Combine(firstTexturePath, "thumbnail.jpg");
+                                                if (System.IO.File.Exists(source))
+                                                {
+                                                    string thumbPath = System.IO.Path.Combine(outputDir, dirName + ".jpg");
+                                                    File.Copy(source, thumbPath, true);
+                                                }
+                                            }
                                         }
-                                        ZipFile.CreateFromDirectory(dir, zipPath, CompressionLevel.Optimal, true);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Console.WriteLine($"Error packing {dir}: {ex.Message}");
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine($"Error extracting thumbnail for {pkg.Path}: {ex.Message}");
+                                        }
                                     }
                                 }
-                                
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Error packing {pkg.Path}: {ex.Message}");
+                                }
                             });
-
                             break;
                         }
                     case "find":

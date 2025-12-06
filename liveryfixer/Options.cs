@@ -16,6 +16,8 @@ namespace liveryfixer
 
         public string packagePathPrefix { get; set; } = "";
 
+        public bool extractThumbnailWhenPacking { get; set; } = false;
+
         public Dictionary<string, List<string>> requiredTextureFallbacksByType { get; set; } = new Dictionary<string, List<string>>() {};
 
         public Dictionary<string, List<string>> unneededTextureFallbacksByType { get; set; } = new Dictionary<string, List<string>>() {};
