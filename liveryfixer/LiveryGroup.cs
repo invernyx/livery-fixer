@@ -8,8 +8,8 @@ namespace liveryfixer
 {
     internal class LiveryGroup
     {
-        public string BaseContainer { get; set; }
-        public string AircraftCfgPath { get; set; }
+        public string BaseContainer { get; set; }        
+        public string CfgPath { get; set; }
         public string Path { get; set; }
         public List<Livery> Liveries { get; set; } = new List<Livery>();
     }

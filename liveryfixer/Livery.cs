@@ -14,6 +14,7 @@ namespace liveryfixer
         public string Variation { get; set; }
         public string Registration { get; set; }
         public string AirlineICAO { get; set; }
+        public string AirlineName { get; set; }
         public string Title { get; set; }
         public string Type { get; set; }
         public List<string> TextureFallbacks { get; set; }

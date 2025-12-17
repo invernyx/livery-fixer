@@ -12,6 +12,8 @@ namespace liveryfixer
     {
         public bool renamePackage { get; set; } = true;
 
+        public bool fs24 = true;
+
         public bool setContentType { get; set; } = true;
 
         public string packagePathPrefix { get; set; } = "";
@@ -23,6 +25,8 @@ namespace liveryfixer
         public Dictionary<string, List<string>> unneededTextureFallbacksByType { get; set; } = new Dictionary<string, List<string>>() {};
         
         public Dictionary<string, string> creatorNameCorrections { get; set; } = new Dictionary<string, string>() {};
+
+        public Dictionary<string, List<string>> tagsToType { get; set; } = new Dictionary<string, List<string>>() { };
 
         public static Options current = null;
         public static Options LoadOptions(string path)
@@ -38,6 +42,8 @@ namespace liveryfixer
                 opt = new Options();
             }            
 
+            //DEBUG
+            opt.tagsToType.Add("MD-11F GE", new List<string>(){"PAX", "GE" });
             return opt;
         }
 
