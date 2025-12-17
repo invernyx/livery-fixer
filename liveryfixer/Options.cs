@@ -12,7 +12,7 @@ namespace liveryfixer
     {
         public bool renamePackage { get; set; } = true;
 
-        public bool fs24 = true;
+        public bool fs24 { get; set; } = false;
 
         public bool setContentType { get; set; } = true;
 
@@ -41,9 +41,6 @@ namespace liveryfixer
             {
                 opt = new Options();
             }            
-
-            //DEBUG
-            opt.tagsToType.Add("MD-11F GE", new List<string>(){"PAX", "GE" });
             return opt;
         }
 

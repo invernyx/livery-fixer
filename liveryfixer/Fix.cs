@@ -262,6 +262,53 @@ namespace liveryfixer
 
             foreach (LiveryPackage pkg in packages)
             {
+
+                foreach (string airplaneDir in System.IO.Directory.GetDirectories(System.IO.Path.Combine(pkg.Path, "SimObjects\\Airplanes"), "*"))
+                {
+                    string livsDir = System.IO.Path.Combine(airplaneDir, "Liveries");
+                    foreach (string authorDir in System.IO.Directory.GetDirectories(livsDir, "*"))
+                    {
+                        string creatorDir = System.IO.Path.Combine(livsDir, pkg.Creator.Replace("\"", ""));
+                        if (authorDir.ToLowerInvariant() == creatorDir.ToLowerInvariant())
+                            continue;
+
+                        actionsTaken.Add($"Renaming author directory '{authorDir}' to '{creatorDir}'");
+
+                        if (System.IO.Directory.Exists(creatorDir) == false)
+                            System.IO.Directory.Move(authorDir, creatorDir);
+                        else
+                        {
+                            try
+                            {
+                                //move contents of dir into creatorDir and delete empty dir
+                                foreach (string subDir in System.IO.Directory.GetDirectories(authorDir, "*"))
+                                {
+                                    System.IO.Directory.Move(subDir, System.IO.Path.Combine(creatorDir, System.IO.Path.GetFileName(subDir)));
+                                }
+
+                                foreach (string file in System.IO.Directory.GetFiles(authorDir, "*"))
+                                {
+                                    System.IO.File.Move(file, System.IO.Path.Combine(creatorDir, System.IO.Path.GetFileName(file)));
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                actionsTaken.Add($"Error: Failed to merge directories '{authorDir}' into '{creatorDir}': {ex.Message}");
+                                continue;
+                            }
+
+                            try
+                            {
+                                System.IO.Directory.Delete(authorDir);
+                            }
+                            catch (Exception ex)
+                            {
+                                actionsTaken.Add($"Error: Failed to delete empty directory '{authorDir}': {ex.Message}");
+                            }
+                        }
+                    }
+                }
+
                 string desName = Options.current.packagePathPrefix;
                 if (pkg.groups.Count > 1)
                 {

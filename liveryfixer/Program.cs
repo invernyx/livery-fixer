@@ -211,13 +211,13 @@ namespace liveryfixer
                                     {
                                         try
                                         {
-                                            string firstTexturePath = pkg.groups.FirstOrDefault()?.Liveries.FirstOrDefault()?.Path;
-                                            if (firstTexturePath != null)
+                                            string path = pkg.IsFS2024 == false ? pkg.groups.FirstOrDefault()?.Liveries.FirstOrDefault()?.Path : pkg.groups.FirstOrDefault()?.Path;
+                                            if (path != null)
                                             {
-                                                string source = System.IO.Path.Combine(firstTexturePath, "thumbnail.jpg");
+                                                string source = pkg.IsFS2024 == false ? System.IO.Path.Combine(path, "thumbnail.jpg") : System.IO.Path.Combine(path, "thumbnail/thumbnail.png");
                                                 if (System.IO.File.Exists(source))
                                                 {
-                                                    string thumbPath = System.IO.Path.Combine(outputDir, dirName + ".jpg");
+                                                    string thumbPath = System.IO.Path.Combine(outputDir, dirName + ".png");
                                                     File.Copy(source, thumbPath, true);
                                                 }
                                             }

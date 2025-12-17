@@ -3,6 +3,13 @@
   "packagePathPrefix": "tfdidesign-aircraft-",
   "setContentType": true,
   "extractThumbnailWhenPacking": true,
+  "fs24": true,
+  "tagsToType": {
+    "MD-11F GE": [ "GE", "F" ],
+    "MD-11F PW": [ "PW", "F" ],
+    "MD-11 GE": [ "GE", "PAX" ],
+    "MD-11 PW": [ "PW", "PAX" ]
+  },
   "requiredTextureFallbacksByType": {
     "md-11 ge": [
       "..\\..\\..\\..\\texture",
@@ -90,6 +97,7 @@
     "Hues, TFDi Design": "HUES",
     "WhiskeyThrottle, TFDi Design": "HUES",
     "SilkySmooth, TFDi Design": "HUES",
-    "TFDi Design | HUES": "HUES"
+    "TFDi Design | HUES": "HUES",
+    "TFDI Design": "HUES"
   }
 }
