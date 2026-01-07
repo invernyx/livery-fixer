@@ -18,9 +18,9 @@ namespace liveryfixer
 
         public static List<LiveryPackage> GetLiveryPackages(string liveriesDir)
         {
-            if(Options.current.fs24 == true)            
+            if (Options.current.fs24 == true)
                 return GetLiveryPackages24(liveriesDir);
-            
+
             List<LiveryPackage> packages = new List<LiveryPackage>();
 
             //Traverse all directories in the liveryDir and within each one, verify there is a manifest.json and layout.json, printing an error for violations
@@ -88,7 +88,7 @@ namespace liveryfixer
                 }
 
                 string airplaneDir = System.IO.Path.Combine(baseDir, "SimObjects\\Airplanes");
-                if(System.IO.Directory.Exists(airplaneDir) == false)
+                if (System.IO.Directory.Exists(airplaneDir) == false)
                 {
                     Console.WriteLine($"Error: SimObjects\\Airplanes directory not found in {baseDir}");
                     continue;
@@ -259,7 +259,7 @@ namespace liveryfixer
 
                     foreach (string authorDir in System.IO.Directory.GetDirectories(livsDir, "*"))
                     {
-                        foreach(string liveryDir in System.IO.Directory.GetDirectories(authorDir, "*"))
+                        foreach (string liveryDir in System.IO.Directory.GetDirectories(authorDir, "*"))
                         {
                             string liveryCfgPath = System.IO.Path.Combine(liveryDir, "livery.cfg");
                             if (System.IO.File.Exists(liveryCfgPath))
@@ -270,12 +270,12 @@ namespace liveryfixer
                                 LiveryGroup lGroup = new LiveryGroup();
                                 lGroup.CfgPath = liveryCfgPath;
                                 lGroup.Path = liveryDir;
-                                lGroup.BaseContainer = cfg.Section("VARIATION")?.Value("base_container");                               
-                                                           
-                                
-                                Livery livery = new Livery();                                
+                                lGroup.BaseContainer = cfg.Section("VARIATION")?.Value("base_container");
+
+
+                                Livery livery = new Livery();
                                 livery.Path = System.IO.Path.Combine(liveryDir, "texture.exterior");
-                                if(Directory.Exists(livery.Path) == false)
+                                if (Directory.Exists(livery.Path) == false)
                                 {
                                     Console.WriteLine($"Error: texture.exterior directory not found in {liveryDir}");
                                     continue;
@@ -287,24 +287,23 @@ namespace liveryfixer
                                 livery.AirlineName = cfg.Section("FLTSIM")?.Value("atc_airline");
                                 livery.Registration = cfg.Section("FLTSIM")?.Value("atc_id");
 
-                                List<string> tags = cfg.Section("SELECTION")?.Value("required_tags")?.Replace("\"", "").Trim().Split(',').ToList();
-                                if(tags.Count == 0 && Options.current.tagsToType.Count > 0)
+                                List<string> tags = cfg.Section("SELECTION")?.Value("required_tags")?.Replace("\"", "").Trim().ToUpperInvariant().Split(',').ToList();
+                                if (tags.Count == 0 && Options.current.tagsToType.Count > 0)
                                 {
                                     Console.WriteLine($"Error: no tags specified in {liveryCfgPath}");
                                     continue;
                                 }
-                                foreach(KeyValuePair<string, List<string>> tagTypePair in Options.current.tagsToType)
+
+
+                                foreach(var kvp in Options.current.tagsToType)
                                 {
-                                    
-                                    foreach(string tag in tagTypePair.Value)
+                                    if(kvp.Value.All(tags.Contains))
                                     {
-                                        if(tags.Contains(tag.ToLowerInvariant(), StringComparer.InvariantCultureIgnoreCase))
-                                        {
-                                            livery.Type = tagTypePair.Key;
-                                            break;
-                                        }
-                                    }
+                                        livery.Type = kvp.Key;
+                                        break;
+                                    }    
                                 }
+
                                 if (tags.Count > 0 && string.IsNullOrEmpty(livery.Type))
                                 {
                                     Console.WriteLine($"Error: no matching variation found in {liveryCfgPath} for {string.Join(", ", tags)}");
