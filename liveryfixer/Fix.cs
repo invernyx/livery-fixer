@@ -220,24 +220,24 @@ namespace liveryfixer
                             packages[i].groups[r].Liveries[l] = livery;
                             if (modified)
                             {
-                                actionsTaken.Add($"Updated texture fallbacks for livery '{livery.Registration}' in package '{packages[i].Path}'");
-
-                                //rewrite texture.cfg
-                                CfgFile textureCfg = new CfgFile(System.IO.Path.Combine(livery.Path, "texture.cfg"));
-                                for (int c = 0; c < textureCfg.sections.Count; c++)
-                                {
-                                    if (textureCfg.sections.ElementAt(c).Key.StartsWith("fltsim"))
-                                    {
-                                        textureCfg.sections[textureCfg.sections.ElementAt(c).Key].Lines.RemoveAll(line => line.Key.ToLowerInvariant().Trim().StartsWith("fallback."));
-                                        for (int f = 0; f < livery.TextureFallbacks.Count; f++)
-                                        {
-                                            textureCfg.sections[textureCfg.sections.ElementAt(c).Key].Lines.Add(new CfgFile.CfgLine($"fallback.{f + 1}", $"{livery.TextureFallbacks[f]}"));
-                                        }
-                                    }
-                                }
+                                actionsTaken.Add($"Updated texture fallbacks for livery '{livery.Registration}' in package '{packages[i].Path}'");                                
 
                                 try
                                 {
+                                    //rewrite texture.cfg
+                                    CfgFile textureCfg = new CfgFile(System.IO.Path.Combine(livery.Path, "texture.cfg"));
+                                    for (int c = 0; c < textureCfg.sections.Count; c++)
+                                    {
+                                        if (textureCfg.sections.ElementAt(c).Key.StartsWith("fltsim"))
+                                        {
+                                            textureCfg.sections[textureCfg.sections.ElementAt(c).Key].Lines.RemoveAll(line => line.Key.ToLowerInvariant().Trim().StartsWith("fallback."));
+                                            for (int f = 0; f < livery.TextureFallbacks.Count; f++)
+                                            {
+                                                textureCfg.sections[textureCfg.sections.ElementAt(c).Key].Lines.Add(new CfgFile.CfgLine($"fallback.{f + 1}", $"{livery.TextureFallbacks[f]}"));
+                                            }
+                                        }
+                                    }
+
                                     System.IO.File.WriteAllText(System.IO.Path.Combine(livery.Path, "texture.cfg"), textureCfg.ToString());
                                 }
                                 catch (Exception ex)
